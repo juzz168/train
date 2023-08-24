@@ -1,7 +1,10 @@
 package com.tsuki.train.controller;
 
+import com.tsuki.train.req.MemberLoginReq;
 import com.tsuki.train.req.MemberRegisterReq;
+import com.tsuki.train.req.MemberSendCodeReq;
 import com.tsuki.train.resp.CommonResp;
+import com.tsuki.train.resp.MemberLoginResp;
 import com.tsuki.train.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,5 +34,17 @@ public class MemberController {
         commonResp.setContent(register);
         return commonResp;*/
         return new CommonResp<>(register);
+    }
+
+    @PostMapping("/send-code")
+    public CommonResp<Long> sendCode(@Valid MemberSendCodeReq req){
+        memberService.sendCode(req);
+        return new CommonResp<>();
+    }
+
+    @PostMapping("/login")
+    public CommonResp<MemberLoginResp> login(@Valid MemberLoginReq req){
+        MemberLoginResp resp = memberService.login(req);
+        return new CommonResp<>(resp);
     }
 }
