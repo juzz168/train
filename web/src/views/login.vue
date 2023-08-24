@@ -24,7 +24,7 @@
         >
           <a-input-group compact>
             <a-input v-model:value="loginForm.code" style="width: calc(100% - 108px)" />
-            <a-button type="primary">获取验证码</a-button>
+            <a-button @click="sendCode" type="primary">获取验证码</a-button>
           </a-input-group>
         </a-form-item>
 
@@ -37,11 +37,16 @@
 </template>
 <script>
 import { defineComponent,reactive } from 'vue';
+import { notification } from 'ant-design-vue';
+import axios from "axios";
+import {useRouter} from "vue-router";
+
 export default defineComponent({
   name:"login-view",
   setup(){
+    const router = useRouter();
     const loginForm = reactive({
-      mobile: '1300000000',
+      mobile: '15795650358',
       code: '',
     });
     const onFinish = values => {
@@ -50,10 +55,39 @@ export default defineComponent({
     const onFinishFailed = errorInfo => {
       console.log('Failed:', errorInfo);
     };
+    const sendCode = () => {
+      axios.post("/member/member/send-code",{
+        mobile: loginForm.mobile
+      }).then((response) =>{
+        let data = response.data;
+        if (data.success) {
+          notification.success({ description: '发送验证码成功！' });
+          loginForm.code = "1234";
+        } else {
+          notification.error({ description: data.message });
+        }
+      })
+    };
+    const login = () => {
+      axios.post("/member/member/login", loginForm).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({ description: '登录成功！' });
+          // 登录成功，跳到控台主页
+          router.push('/');
+          //router.push("/welcome");
+          //store.commit("setMember", data.content);
+        } else {
+          notification.error({ description: data.message });
+        }
+      })
+    };
     return {
       loginForm,
       onFinish,
-      onFinishFailed
+      onFinishFailed,
+      login,
+      sendCode
     }
   }
 });
