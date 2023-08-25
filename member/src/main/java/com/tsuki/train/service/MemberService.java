@@ -13,6 +13,7 @@ import com.tsuki.train.req.MemberLoginReq;
 import com.tsuki.train.req.MemberRegisterReq;
 import com.tsuki.train.req.MemberSendCodeReq;
 import com.tsuki.train.resp.MemberLoginResp;
+import com.tsuki.train.util.JwtUtil;
 import com.tsuki.train.util.SnowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,7 +84,10 @@ public class MemberService {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_CODE_ERROR);
         }
 
-        return BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
+        String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
+        memberLoginResp.setToken(token);
+        return memberLoginResp;
     }
 
     private Member selectByMobile(String mobile) {
