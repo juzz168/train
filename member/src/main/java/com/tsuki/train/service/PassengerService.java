@@ -2,6 +2,7 @@ package com.tsuki.train.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import com.tsuki.train.context.LoginMemberContext;
 import com.tsuki.train.domain.Passenger;
 import com.tsuki.train.mapper.PassengerMapper;
 import com.tsuki.train.req.PassengerSaveReq;
@@ -19,6 +20,7 @@ public class PassengerService {
     public void save(PassengerSaveReq req){
         DateTime now = DateTime.now();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
+        passenger.setMemberId(LoginMemberContext.getId());
         passenger.setId(SnowUtil.getSnowflakeNextId());
         passenger.setCreateTime(now);
         passenger.setUpdateTime(now);
