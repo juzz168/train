@@ -50,12 +50,6 @@ export default defineComponent({
       mobile: '15795650358',
       code: '',
     });
-    const onFinish = values => {
-      console.log('Success:', values);
-    };
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
-    };
     const sendCode = () => {
       axios.post("/member/member/send-code",{
         mobile: loginForm.mobile
@@ -75,10 +69,9 @@ export default defineComponent({
         if (data.success) {
           notification.success({ description: '登录成功！' });
           // 登录成功，跳到控台主页
-          router.push('/');
+          //router.push('/');
+          router.push("/welcome");
           store.commit("setMember", data.content);
-          //router.push("/welcome");
-          //store.commit("setMember", data.content);
         } else {
           notification.error({ description: data.message });
         }
@@ -86,8 +79,6 @@ export default defineComponent({
     };
     return {
       loginForm,
-      onFinish,
-      onFinishFailed,
       login,
       sendCode
     }
