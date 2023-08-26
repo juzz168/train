@@ -11,7 +11,7 @@ const routes = [{
   meta: {
     loginRequire: true
   },
-  /*children: [{
+  children: [{
     path: 'welcome',
     component: () => import('../views/main/welcome.vue'),
   }, {
@@ -20,7 +20,7 @@ const routes = [{
   }]
 }, {
   path: '',
-  redirect: '/welcome'*/
+  redirect: '/welcome'
 }];
 
 const router = createRouter({
