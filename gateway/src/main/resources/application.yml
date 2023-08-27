@@ -28,4 +28,4 @@ spring:
           #uri: lb://cloud-payment-service
           predicates:
             - Path=/business/**  #断言,路径相匹配的进行路由
-            - After=2023-08-09T21:59:19.537+08:00[GMT+08:00]
+            #- After=2023-08-09T21:59:19.537+08:00[GMT+08:00]
