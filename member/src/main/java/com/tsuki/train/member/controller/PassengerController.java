@@ -7,7 +7,6 @@ import com.tsuki.train.member.req.PassengerSaveReq;
 import com.tsuki.train.common.resp.CommonResp;
 import com.tsuki.train.common.resp.PageResp;
 import com.tsuki.train.member.resp.PassengerQueryResp;
-import com.tsuki.train.member.service.PassengerService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 

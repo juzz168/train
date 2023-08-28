@@ -2,6 +2,7 @@ package com.tsuki.train.generator.gen;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.tsuki.train.business.enums.TrainTypeEnum;
 import com.tsuki.train.member.enums.PassengerTypeEnum;
 
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ public class EnumGenerator {
         long begin = System.currentTimeMillis();
         try {
             toJson(PassengerTypeEnum.class, bufferObject, bufferArray);
+            toJson(TrainTypeEnum.class, bufferObject, bufferArray);
 
             StringBuffer buffer = bufferObject.append("\r\n").append(bufferArray);
             writeJs(buffer);

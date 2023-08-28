@@ -13,17 +13,15 @@ import com.tsuki.train.${module}.mapper.${Domain}Mapper;
 import com.tsuki.train.${module}.req.${Domain}QueryReq;
 import com.tsuki.train.${module}.req.${Domain}SaveReq;
 import com.tsuki.train.${module}.resp.${Domain}QueryResp;
-import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ${Domain}Service {
-
-    private static final Logger LOG = LoggerFactory.getLogger(${Domain}Service.class);
 
     @Resource
     private ${Domain}Mapper ${domain}Mapper;
@@ -47,14 +45,14 @@ public class ${Domain}Service {
         ${domain}Example.setOrderByClause("id desc");
         ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
 
-        LOG.info("查询页码：{}", req.getPage());
-        LOG.info("每页条数：{}", req.getSize());
+        log.info("查询页码：{}", req.getPage());
+        log.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());
         List<${Domain}> ${domain}List = ${domain}Mapper.selectByExample(${domain}Example);
 
         PageInfo<${Domain}> pageInfo = new PageInfo<>(${domain}List);
-        LOG.info("总行数：{}", pageInfo.getTotal());
-        LOG.info("总页数：{}", pageInfo.getPages());
+        log.info("总行数：{}", pageInfo.getTotal());
+        log.info("总页数：{}", pageInfo.getPages());
 
         List<${Domain}QueryResp> list = BeanUtil.copyToList(${domain}List, ${Domain}QueryResp.class);
 

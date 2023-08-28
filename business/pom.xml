@@ -18,12 +18,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.tsuki</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -36,14 +30,29 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>com.tsuki</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
+    </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- 解决没有main函数报错unable to find main class 的问题-->
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classifier>execute</classifier>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
