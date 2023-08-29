@@ -3,10 +3,10 @@ Accept: application/json
 token: 123
 
 ###
-POST http://localhost:8000/member/member/register
-Content-Type: application/x-www-form-urlencoded
+POST http://localhost:8001/member/member/register
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 
-mobile=12345678
+mobile=123
 
 ###
 POST http://localhost:8000/member/member/send-code

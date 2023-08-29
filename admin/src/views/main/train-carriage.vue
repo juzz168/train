@@ -184,7 +184,8 @@ export default defineComponent({
       axios.get("/business/admin/train-carriage/query-list", {
         params: {
           page: param.page,
-          size: param.size
+          size: param.size,
+          trainCode: params.value.trainCode
         }
       }).then((response) => {
         loading.value = false;

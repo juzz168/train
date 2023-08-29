@@ -1,12 +1,11 @@
 package com.tsuki.train.business.req;
 
 import com.tsuki.train.common.req.PageReq;
+import lombok.Data;
 
+@Data
 public class TrainCarriageQueryReq extends PageReq {
 
-    @Override
-    public String toString() {
-        return "TrainCarriageQueryReq{" +
-                "} " + super.toString();
-    }
+    private String trainCode;
+
 }

@@ -3,6 +3,7 @@ package com.tsuki.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tsuki.train.common.resp.PageResp;
@@ -45,6 +46,10 @@ public class TrainCarriageService {
         trainCarriageExample.setOrderByClause("id desc");
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
 
+        if (StrUtil.isNotBlank(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
+
         log.info("查询页码：{}", req.getPage());
         log.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());
@@ -64,5 +69,13 @@ public class TrainCarriageService {
 
     public void delete(Long id) {
         trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("`index` asc");
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(trainCarriageExample);
     }
 }

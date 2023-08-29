@@ -1,7 +1,7 @@
-package com.tsuki.train.business.controller;
+package com.tsuki.train.member.controller;
 
-import com.tsuki.train.business.req.TestReq;
 import com.tsuki.train.common.resp.CommonResp;
+import com.tsuki.train.member.req.TestReq;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
