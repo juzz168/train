@@ -16,4 +16,4 @@ mybatis:
   mapperLocations: classpath:mapper/*.xml
 logging:
   level:
-    com.tsuki.train.mapper: trace #com.tsuki.train.mapper为包名
+    com.tsuki.train.business.mapper: trace #com.tsuki.train.mapper为包名
