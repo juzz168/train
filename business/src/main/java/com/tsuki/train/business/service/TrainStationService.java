@@ -3,6 +3,7 @@ package com.tsuki.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tsuki.train.common.resp.PageResp;
@@ -42,8 +43,12 @@ public class TrainStationService {
 
     public PageResp<TrainStationQueryResp> queryList(TrainStationQueryReq req) {
         TrainStationExample trainStationExample = new TrainStationExample();
-        trainStationExample.setOrderByClause("id desc");
+        trainStationExample.setOrderByClause("train_code asc, 'index' asc");
         TrainStationExample.Criteria criteria = trainStationExample.createCriteria();
+
+        if (StrUtil.isNotBlank(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         log.info("查询页码：{}", req.getPage());
         log.info("每页条数：{}", req.getSize());
@@ -64,5 +69,14 @@ public class TrainStationService {
 
     public void delete(Long id) {
         trainStationMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<TrainStationQueryResp> queryAll(){
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.setOrderByClause("name_pinyin");
+
+        List<TrainStation> trainStationList = trainStationMapper.selectByExample(trainStationExample);
+
+        return BeanUtil.copyToList(trainStationList, TrainStationQueryResp.class);
     }
 }

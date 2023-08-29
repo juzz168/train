@@ -11,6 +11,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/train-station")
 public class TrainStationAdminController {
@@ -36,4 +38,9 @@ public class TrainStationAdminController {
         return new CommonResp<>();
     }
 
+    @GetMapping("/query-all")
+    public CommonResp<List<TrainStationQueryResp>> queryList() {
+        List<TrainStationQueryResp> list = trainStationService.queryAll();
+        return new CommonResp<>(list);
+    }
 }
