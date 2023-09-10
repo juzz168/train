@@ -1,14 +1,16 @@
 package com.tsuki.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.tsuki.train.business.domain.*;
+import com.tsuki.train.common.exception.BusinessException;
+import com.tsuki.train.common.exception.BusinessExceptionEnum;
 import com.tsuki.train.common.resp.PageResp;
 import com.tsuki.train.common.util.SnowUtil;
-import com.tsuki.train.business.domain.Train;
-import com.tsuki.train.business.domain.TrainExample;
 import com.tsuki.train.business.mapper.TrainMapper;
 import com.tsuki.train.business.req.TrainQueryReq;
 import com.tsuki.train.business.req.TrainSaveReq;
@@ -30,6 +32,11 @@ public class TrainService {
         DateTime now = DateTime.now();
         Train train = BeanUtil.copyProperties(req, Train.class);
         if (ObjectUtil.isNull(train.getId())) {
+            //保存之前，先校验唯一键
+            Train trainDB = selectByUnique(req.getCode());
+            if (ObjectUtil.isNotEmpty(trainDB)){
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CODE_UNIQUE_ERROR);
+            }
             train.setId(SnowUtil.getSnowflakeNextId());
             train.setCreateTime(now);
             train.setUpdateTime(now);
@@ -73,5 +80,16 @@ public class TrainService {
         List<Train> trainList = trainMapper.selectByExample(trainExample);
 
         return BeanUtil.copyToList(trainList, TrainQueryResp.class);
+    }
+
+    private Train selectByUnique(String code) {
+        TrainExample trainExample = new TrainExample();
+        trainExample.createCriteria()
+                .andCodeEqualTo(code);
+        List<Train> list = trainMapper.selectByExample(trainExample);
+        if (CollUtil.isNotEmpty(list)){
+            return list.get(0);
+        }
+        return null;
     }
 }
