@@ -59,7 +59,7 @@ public class TrainCarriageService {
 
     public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-        trainCarriageExample.setOrderByClause("id desc");
+        trainCarriageExample.setOrderByClause("train_code asc, `index` asc");
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
 
         if (StrUtil.isNotBlank(req.getTrainCode())){

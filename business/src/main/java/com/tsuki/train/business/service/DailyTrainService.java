@@ -33,6 +33,15 @@ public class DailyTrainService {
     @Resource
     private TrainService trainService;
 
+    @Resource
+    private DailyTrainStationService dailyTrainStationService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
+
     public void save(DailyTrainSaveReq req) {
         DateTime now = DateTime.now();
         DailyTrain dailyTrain = BeanUtil.copyProperties(req, DailyTrain.class);
@@ -77,30 +86,49 @@ public class DailyTrainService {
         return pageResp;
     }
 
-    /*
-    * 生成某日车次所有信息，包括车次，车站，车厢，座位
-    * */
-    public void getDaily(Date date){
+
+    /**
+     * 生成某日所有车次信息，包括车次、车站、车厢、座位
+     * @param date
+     */
+    public void genDaily(Date date) {
         List<Train> trainList = trainService.selectAll();
-        if (CollUtil.isEmpty(trainList)){
-            log.info("没有车次基础次序");
+        if (CollUtil.isEmpty(trainList)) {
+            log.info("没有车次基础数据，任务结束");
             return;
         }
-        for (Train item : trainList) {
+
+        for (Train train : trainList) {
+            genDailyTrain(date, train);
+        }
+    }
+    public void genDailyTrain(Date date, Train train){
+
+        log.info("生成日期【{}】车次的信息开始", date);
+
             //删除该车次已有的数据
             DailyTrainExample dailyTrainExample = new DailyTrainExample();
-            dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(item.getCode());
+            dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(train.getCode());
             dailyTrainMapper.deleteByExample(dailyTrainExample);
 
             //生成该车次的数据
             DateTime now = DateTime.now();
-            DailyTrain dailyTrain = BeanUtil.copyProperties(item, DailyTrain.class);
+            DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
             dailyTrain.setId(SnowUtil.getSnowflakeNextId());
             dailyTrain.setCreateTime(now);
             dailyTrain.setUpdateTime(now);
             dailyTrain.setDate(date);
             dailyTrainMapper.insert(dailyTrain);
-        }
+
+        // 生成该车次的车站数据
+        dailyTrainStationService.genDaily(date, train.getCode());
+
+        // 生成该车次的车厢数据
+        dailyTrainCarriageService.genDaily(date, train.getCode());
+
+        // 生成该车次的座位数据
+        dailyTrainSeatService.genDaily(date, train.getCode());
+        log.info("生成日期【{}】车次的信息结束", date);
     }
     public void delete(Long id) {
         dailyTrainMapper.deleteByPrimaryKey(id);

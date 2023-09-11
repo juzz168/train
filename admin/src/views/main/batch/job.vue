@@ -7,6 +7,7 @@
       <a-button type="primary" @click="handleQuery()">
         刷新
       </a-button>
+      <a-button type="danger" @click="onClickGenDaily">手动生成车次信息</a-button>
     </p>
     <a-table :dataSource="jobs"
              :columns="columns"
@@ -88,6 +89,18 @@
         </a-form-item>
       </a-form>
     </a-modal>
+    <a-modal
+        title="生成车次"
+        v-model:visible="genDailyVisible"
+        @ok="handleGenDailyOk"
+        ok-text="确认" cancel-text="取消"
+    >
+      <a-form :model="genDaily" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+        <a-form-item label="日期">
+         <a-date-picker v-model:value="genDaily.date" placeholder="请选择日期"></a-date-picker>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
@@ -95,12 +108,17 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: 'batch-job-view',
   setup () {
     const jobs = ref();
     const loading = ref();
+    let params = ref({
+      code: null
+    });
+    const genDailyVisible = ref(false);
 
     const columns = [{
       title: '分组',
@@ -128,6 +146,29 @@ export default defineComponent({
       dataIndex: 'operation'
     }];
 
+    const onClickGenDaily = () => {
+      genDailyVisible.value = true;
+    };
+    const genDaily = ref({
+      date : null
+    })
+
+    const handleGenDailyOk = () => {
+      let date = dayjs(genDaily.value.data).format("YYYY-MM-DD");
+      axios.get("/business/admin/daily-train/gen-daily/" + date).then((response) =>{
+        let data = response.data;
+        if (data.success){
+          notification.success({description: "生成成功！"});
+          genDailyVisible.value = false;
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          })
+        }else {
+          notification.error({description: data.messages})
+        }
+      });
+    };
     const handleQuery = () => {
       loading.value = true;
       jobs.value = [];
@@ -276,7 +317,12 @@ export default defineComponent({
       modalLoading,
       handleModalOk,
       getEnumValue,
-      handleRun
+      handleRun,
+      params,
+      genDaily,
+      genDailyVisible,
+      handleGenDailyOk,
+      onClickGenDaily
     };
   }
 })
