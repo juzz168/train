@@ -12,3 +12,12 @@ GET http://47.101.44.52/batch/hello
 Accept: application/json
 
 ###
+
+
+POST http://localhost:8000/batch/admin/job/run
+Content-Type: application/json
+
+{
+  "name": "com.tsuki.train.batch.job.DailyTrainJob",
+  "jobGroupName": "default"
+}

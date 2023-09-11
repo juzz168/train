@@ -1,11 +1,13 @@
 package com.tsuki.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.tsuki.train.business.domain.Train;
 import com.tsuki.train.common.resp.PageResp;
 import com.tsuki.train.common.util.SnowUtil;
 import com.tsuki.train.business.domain.DailyTrain;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,6 +29,9 @@ public class DailyTrainService {
 
     @Resource
     private DailyTrainMapper dailyTrainMapper;
+
+    @Resource
+    private TrainService trainService;
 
     public void save(DailyTrainSaveReq req) {
         DateTime now = DateTime.now();
@@ -71,6 +77,31 @@ public class DailyTrainService {
         return pageResp;
     }
 
+    /*
+    * 生成某日车次所有信息，包括车次，车站，车厢，座位
+    * */
+    public void getDaily(Date date){
+        List<Train> trainList = trainService.selectAll();
+        if (CollUtil.isEmpty(trainList)){
+            log.info("没有车次基础次序");
+            return;
+        }
+        for (Train item : trainList) {
+            //删除该车次已有的数据
+            DailyTrainExample dailyTrainExample = new DailyTrainExample();
+            dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(item.getCode());
+            dailyTrainMapper.deleteByExample(dailyTrainExample);
+
+            //生成该车次的数据
+            DateTime now = DateTime.now();
+            DailyTrain dailyTrain = BeanUtil.copyProperties(item, DailyTrain.class);
+            dailyTrain.setId(SnowUtil.getSnowflakeNextId());
+            dailyTrain.setCreateTime(now);
+            dailyTrain.setUpdateTime(now);
+            dailyTrain.setDate(date);
+            dailyTrainMapper.insert(dailyTrain);
+        }
+    }
     public void delete(Long id) {
         dailyTrainMapper.deleteByPrimaryKey(id);
     }
