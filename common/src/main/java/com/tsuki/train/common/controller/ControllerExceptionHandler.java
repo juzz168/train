@@ -1,6 +1,7 @@
 package com.tsuki.train.common.controller;
 
 import com.tsuki.train.common.exception.BusinessException;
+import com.tsuki.train.common.exception.SysUserException;
 import com.tsuki.train.common.resp.CommonResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
@@ -34,6 +35,21 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
     public CommonResp exceptionHandler(BusinessException e) {
+        CommonResp commonResp = new CommonResp();
+        log.error("业务异常：{}", e.getE().getDesc());
+        commonResp.setSuccess(false);
+        commonResp.setMessage(e.getE().getDesc());
+        return commonResp;
+    }
+
+    /**
+     * 管理业务异常统一处理
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = SysUserException.class)
+    @ResponseBody
+    public CommonResp exceptionHandler(SysUserException e) {
         CommonResp commonResp = new CommonResp();
         log.error("业务异常：{}", e.getE().getDesc());
         commonResp.setSuccess(false);
